@@ -20,9 +20,11 @@ public class RiftOriginBlockEntity extends BlockEntity {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES =
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, IndustrialGradeMagic.MODID);
 
-    public static final Supplier<BlockEntityType<RiftOriginBlockEntity>> RIFT_ORIGIN_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("rift_origin_block_entity",
-            ()-> BlockEntityType.Builder.of(
+    public static final Supplier<BlockEntityType<RiftOriginBlockEntity>> RIFT_ORIGIN_BLOCK_ENTITY =
+            BLOCK_ENTITY_TYPES.register(
+            "rift_origin_block_entity",
+            () -> BlockEntityType.Builder.of(
                     RiftOriginBlockEntity::new,
-                    RiftBlock.RIFT_ORIGIN_BLOCK
+                    RiftBlock.RIFT_ORIGIN_BLOCK.get()
             ).build(null));
 }
