@@ -26,5 +26,9 @@ public class RiftOriginBlockEntity extends BlockEntity {
             () -> BlockEntityType.Builder.of(
                     RiftOriginBlockEntity::new,
                     RiftBlock.RIFT_ORIGIN_BLOCK.get()
-            ).build(null));
+            ).build());
+
+
+
+
 }

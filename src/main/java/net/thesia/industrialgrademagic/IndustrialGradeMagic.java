@@ -4,6 +4,7 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.neoforge.common.CreativeModeTabRegistry;
 import net.thesia.industrialgrademagic.blocks.RiftBlock;
 import net.thesia.industrialgrademagic.item.ModItems;
+import net.thesia.industrialgrademagic.utility.RiftHandler;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -43,6 +44,7 @@ public class IndustrialGradeMagic
         //own mod items and stuff here
         ModItems.register(modEventBus);
         RiftBlock.register(modEventBus);
+        RiftHandler.register(modEventBus);
 
 
 
