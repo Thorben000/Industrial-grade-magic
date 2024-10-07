@@ -1,14 +1,14 @@
 package net.thesia.industrialgrademagic.blocks.custome;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.thesia.industrialgrademagic.entity.RiftOriginBlockEntity;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -20,7 +20,7 @@ public class RiftOriginBlock extends Block implements EntityBlock {
         super(properties);
     }
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state){
+    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state){
         return new RiftOriginBlockEntity(pos,state);
     }
 
@@ -53,7 +53,7 @@ public class RiftOriginBlock extends Block implements EntityBlock {
     }
 
     @Override
-    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+    protected void onPlace(BlockState state,  Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         BlockEntity entity = level.getBlockEntity(pos);
         entity.setData(RIFT_SIZE,1);
         ArrayList<ArrayList<Integer>> empty = new ArrayList<ArrayList<Integer>>();
@@ -63,13 +63,6 @@ public class RiftOriginBlock extends Block implements EntityBlock {
         super.onPlace(state, level, pos, oldState, movedByPiston);
     }
 
-    @Override
-    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        BlockEntity entity = level.getBlockEntity(pos);
-        int riftSize = entity.getData(RIFT_SIZE);
-        if(riftSize<=10000){
 
-        }
-        super.randomTick(state, level, pos, random);
-    }
+
 }

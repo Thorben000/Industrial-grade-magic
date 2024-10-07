@@ -1,4 +1,4 @@
-package net.thesia.industrialgrademagic.blocks.custome;
+package net.thesia.industrialgrademagic.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -26,7 +26,8 @@ public class RiftOriginBlockEntity extends BlockEntity {
             () -> BlockEntityType.Builder.of(
                     RiftOriginBlockEntity::new,
                     RiftBlock.RIFT_ORIGIN_BLOCK.get()
-            ).build());
+            ).build(null)
+            );
 
 
 
