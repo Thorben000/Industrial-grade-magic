@@ -5,6 +5,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.thesia.industrialgrademagic.IndustrialGradeMagic;
 import net.thesia.industrialgrademagic.blocks.RiftBlock;
@@ -28,6 +30,10 @@ public class RiftOriginBlockEntity extends BlockEntity {
                     RiftBlock.RIFT_ORIGIN_BLOCK.get()
             ).build(null)
             );
+    public static void register(IEventBus eventBus){
+        BLOCK_ENTITY_TYPES.register(eventBus);
+    }
+
 
 
 

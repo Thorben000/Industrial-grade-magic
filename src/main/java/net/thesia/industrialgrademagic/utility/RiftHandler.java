@@ -23,6 +23,23 @@ public class RiftHandler {
                     () -> AttachmentType.builder(()-> 1).build()
             );
 
+    public static final Supplier<AttachmentType<Integer>> RIFT_MAX_SIZE =
+            ATTACHMENT_TYPES.register("rift_max_size",
+            () -> AttachmentType.builder(()->1).build()
+            );
+
+    public static final Supplier<AttachmentType<ArrayList<Double>>> RIFT_LINE =
+            ATTACHMENT_TYPES.register("rift_line",
+                    () -> AttachmentType.builder(() -> new ArrayList<Double>()).build()
+            );
+
+    public static final Supplier<AttachmentType<ArrayList<Double>>> RIFT_PLAIN_NORMAL =
+            ATTACHMENT_TYPES.register("rift_plain_normal",
+                    () -> AttachmentType.builder(() -> new ArrayList<Double>()).build()
+            );
+
+
+
     public static void register(IEventBus eventbus){
         ATTACHMENT_TYPES.register(eventbus);
     }

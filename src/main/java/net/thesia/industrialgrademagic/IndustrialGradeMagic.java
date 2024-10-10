@@ -3,6 +3,7 @@ package net.thesia.industrialgrademagic;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.neoforge.common.CreativeModeTabRegistry;
 import net.thesia.industrialgrademagic.blocks.RiftBlock;
+import net.thesia.industrialgrademagic.entity.RiftOriginBlockEntity;
 import net.thesia.industrialgrademagic.item.ModItems;
 import net.thesia.industrialgrademagic.utility.RiftHandler;
 import org.slf4j.Logger;
@@ -45,6 +46,7 @@ public class IndustrialGradeMagic
         ModItems.register(modEventBus);
         RiftBlock.register(modEventBus);
         RiftHandler.register(modEventBus);
+        RiftOriginBlockEntity.register(modEventBus);
 
 
 
