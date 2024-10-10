@@ -23,9 +23,14 @@ public class RiftHandler {
                     () -> AttachmentType.builder(()-> 1).build()
             );
 
-    public static final Supplier<AttachmentType<Integer>> RIFT_MAX_SIZE =
-            ATTACHMENT_TYPES.register("rift_max_size",
-            () -> AttachmentType.builder(()->1).build()
+    public static final Supplier<AttachmentType<Integer>> RIFT_EXPANSION_SUBLEVEL =
+            ATTACHMENT_TYPES.register("rift_expansion_sublevel",
+                    () -> AttachmentType.builder(()-> 0).build()
+            );
+
+    public static final Supplier<AttachmentType<Boolean>> RIFT_EXPANSION_DONE =
+            ATTACHMENT_TYPES.register("rift_expansion_done",
+            () -> AttachmentType.builder(()->false).build()
             );
 
     public static final Supplier<AttachmentType<ArrayList<Double>>> RIFT_LINE =
