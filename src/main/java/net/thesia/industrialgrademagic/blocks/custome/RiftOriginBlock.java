@@ -29,6 +29,11 @@ public class RiftOriginBlock extends Block implements EntityBlock {
 
     }
     private static BlockPos pointSymmetry(BlockPos mirror, BlockPos pos){
+        int x,y,z;
+        x = (mirror.getX()-pos.getX())*2;
+        y = (mirror.getY()-pos.getY())*2;
+        z = (mirror.getZ()-pos.getZ())*2;
+        pos = pos.offset(x,y,z);
         return pos;
     }
     private static void calculateCorners(BlockEntity entity){
@@ -42,23 +47,26 @@ public class RiftOriginBlock extends Block implements EntityBlock {
         double crossZ=normalX*lineY-normalY*lineX;
         BlockPos corePos = entity.getBlockPos();
         //calculate A1 and A2 based on the normal of the plain
-        double s= Math.pow(Math.pow(normalX,2)+Math.pow(normalY,2)+Math.pow(normalZ,2),0.5) / (riftSize*3);
+        double s= (riftSize*3.0)/ (Math.pow(Math.pow(normalX,2)+Math.pow(normalY,2)+Math.pow(normalZ,2),0.5));
+        System.out.println(s);
         BlockPos A1 = corePos;
-        A1.offset((int)Math.round(s*normalX),
+        A1 = A1.offset((int)Math.round(s*normalX),
                 (int)Math.round(s*normalY),
                 (int)Math.round(s*normalZ));
         BlockPos A2 = pointSymmetry(corePos,A1);
         //calculate B1 and B2 based on the line
-        s= Math.pow(Math.pow(lineX,2)+Math.pow(lineY,2)+Math.pow(lineZ,2),0.5) / (riftSize);
+        s=  (riftSize*1.0) / (Math.pow(Math.pow(lineX,2)+Math.pow(lineY,2)+Math.pow(lineZ,2),0.5));
+        System.out.println(s);
         BlockPos B1 = corePos;
-        B1.offset((int)Math.round(s*lineX),
+        B1 = B1.offset((int)Math.round(s*lineX),
                 (int)Math.round(s*lineY),
                 (int)Math.round(s*lineZ));
         BlockPos B2 = pointSymmetry(corePos,B1);
         //calculate C1 and C2 based on the cross product of line and plain normals
-        s= Math.pow(Math.pow(crossX,2)+Math.pow(crossY,2)+Math.pow(crossZ,2),0.5) / (riftSize);
+        s= (riftSize*2.0)/(Math.pow(Math.pow(crossX,2)+Math.pow(crossY,2)+Math.pow(crossZ,2),0.5));
+        System.out.println(s);
         BlockPos C1 = corePos;
-        C1.offset((int)Math.round(s*crossX),
+        C1 = C1.offset((int)Math.round(s*crossX),
                 (int)Math.round(s*crossY),
                 (int)Math.round(s*crossZ));
         BlockPos C2 = pointSymmetry(corePos,C1);
@@ -73,7 +81,8 @@ public class RiftOriginBlock extends Block implements EntityBlock {
         helperArrayList.add(C1.getX());
         helperArrayList.add(C2.getX());
         helperArrayList.sort(null);
-        maxX = helperArrayList.getFirst();
+        System.out.println(helperArrayList);
+        maxX = helperArrayList.getLast();
         helperArrayList.clear();
         //now for Y
         helperArrayList.add(A1.getY());
@@ -83,7 +92,8 @@ public class RiftOriginBlock extends Block implements EntityBlock {
         helperArrayList.add(C1.getY());
         helperArrayList.add(C2.getY());
         helperArrayList.sort(null);
-        maxY = helperArrayList.getFirst();
+        System.out.println(helperArrayList);
+        maxY = helperArrayList.getLast();
         helperArrayList.clear();
         //now for Z
         helperArrayList.add(A1.getZ());
@@ -93,9 +103,16 @@ public class RiftOriginBlock extends Block implements EntityBlock {
         helperArrayList.add(C1.getZ());
         helperArrayList.add(C2.getZ());
         helperArrayList.sort(null);
-        maxZ = helperArrayList.getFirst();
+        System.out.println(helperArrayList);
+        maxZ = helperArrayList.getLast();
         helperArrayList.clear();
         //save relative vectors^^
+        BlockPos place = entity.getBlockPos();
+        place = place.offset(-1*place.getX(),-1*place.getY(),-1*place.getZ());
+        place = place.offset(maxX,maxY,maxZ);
+        entity.getLevel().setBlockAndUpdate(place,Blocks.END_STONE.defaultBlockState());
+        BlockPos place1 = pointSymmetry(corePos,place);
+        entity.getLevel().setBlockAndUpdate(place1,Blocks.END_STONE.defaultBlockState());
 
     }
 
@@ -153,6 +170,7 @@ public class RiftOriginBlock extends Block implements EntityBlock {
         entity.setData(RIFT_LINE,data2);
         ArrayList<ArrayList<Integer>> empty = new ArrayList<ArrayList<Integer>>();
         entity.setData(RIFT_POSSIBLE_LOCATIONS,empty);
+        calculateCorners(entity);
         if (!level.isClientSide) {
             // Schedule a tick for the block every second (20 ticks)
             level.scheduleTick(pos, this, 2);
