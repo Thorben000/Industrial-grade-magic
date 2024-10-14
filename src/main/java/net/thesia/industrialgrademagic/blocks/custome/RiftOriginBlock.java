@@ -10,6 +10,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.thesia.industrialgrademagic.blocks.RiftBlock;
 import net.thesia.industrialgrademagic.entity.RiftOriginBlockEntity;
 import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
@@ -20,12 +21,38 @@ public class RiftOriginBlock extends Block implements EntityBlock {
     public RiftOriginBlock(Properties properties){
         super(properties);
     }
+
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state){
         return new RiftOriginBlockEntity(pos,state);
     }
 
     private static void expandRift(BlockEntity entity,Integer subLevel){
+        ArrayList<BlockPos> corners = calculateCorners(entity);
+        BlockPos start = corners.get(1);
+        BlockPos entityPos = entity.getBlockPos();
+        int riftSize = entity.getData(RIFT_SIZE);
+        Level level = entity.getLevel();
+        int b = subLevel;
+        String outPut = "";
+        outPut += entityPos + "\n";
+        BlockPos temp = null;
+        for(int i=0;i<=(Math.pow(Math.pow((corners.get(0).getX()-corners.get(1).getX()),2),0.5));i++){
+            for(int a=0;a<=(Math.pow(Math.pow((corners.get(0).getZ()-corners.get(1).getZ()),2),0.5));a++){
+                temp = start.offset(i, b, a);
+                outPut = outPut + temp;
+                outPut += "\n";
+                    if ((temp != entityPos)){
+                        if ((distanceLine(entity,start.offset(i, b, a)) +
+                                    distancePlain(entity,start.offset(i, b, a)) +
+                                    distanceCore(entity,start.offset(i, b, a)))<=riftSize) {
+                            level.setBlockAndUpdate(temp, RiftBlock.RIFT_BLOCK.get().defaultBlockState());
+                        }
+                    }
+                    else {System.out.println("NO");}
+
+            }
+        }
 
     }
     private static BlockPos pointSymmetry(BlockPos mirror, BlockPos pos){
@@ -36,7 +63,8 @@ public class RiftOriginBlock extends Block implements EntityBlock {
         pos = pos.offset(x,y,z);
         return pos;
     }
-    private static void calculateCorners(BlockEntity entity){
+
+    private static ArrayList<BlockPos> calculateCorners(BlockEntity entity){
         ArrayList<Double> normal = entity.getData(RIFT_PLAIN_NORMAL);
         ArrayList<Double> line = entity.getData(RIFT_LINE);
         Integer riftSize = entity.getData(RIFT_SIZE);
@@ -48,7 +76,6 @@ public class RiftOriginBlock extends Block implements EntityBlock {
         BlockPos corePos = entity.getBlockPos();
         //calculate A1 and A2 based on the normal of the plain
         double s= (riftSize*3.0)/ (Math.pow(Math.pow(normalX,2)+Math.pow(normalY,2)+Math.pow(normalZ,2),0.5));
-        System.out.println(s);
         BlockPos A1 = corePos;
         A1 = A1.offset((int)Math.round(s*normalX),
                 (int)Math.round(s*normalY),
@@ -56,7 +83,6 @@ public class RiftOriginBlock extends Block implements EntityBlock {
         BlockPos A2 = pointSymmetry(corePos,A1);
         //calculate B1 and B2 based on the line
         s=  (riftSize*1.0) / (Math.pow(Math.pow(lineX,2)+Math.pow(lineY,2)+Math.pow(lineZ,2),0.5));
-        System.out.println(s);
         BlockPos B1 = corePos;
         B1 = B1.offset((int)Math.round(s*lineX),
                 (int)Math.round(s*lineY),
@@ -64,7 +90,6 @@ public class RiftOriginBlock extends Block implements EntityBlock {
         BlockPos B2 = pointSymmetry(corePos,B1);
         //calculate C1 and C2 based on the cross product of line and plain normals
         s= (riftSize*2.0)/(Math.pow(Math.pow(crossX,2)+Math.pow(crossY,2)+Math.pow(crossZ,2),0.5));
-        System.out.println(s);
         BlockPos C1 = corePos;
         C1 = C1.offset((int)Math.round(s*crossX),
                 (int)Math.round(s*crossY),
@@ -81,7 +106,6 @@ public class RiftOriginBlock extends Block implements EntityBlock {
         helperArrayList.add(C1.getX());
         helperArrayList.add(C2.getX());
         helperArrayList.sort(null);
-        System.out.println(helperArrayList);
         maxX = helperArrayList.getLast();
         helperArrayList.clear();
         //now for Y
@@ -92,7 +116,6 @@ public class RiftOriginBlock extends Block implements EntityBlock {
         helperArrayList.add(C1.getY());
         helperArrayList.add(C2.getY());
         helperArrayList.sort(null);
-        System.out.println(helperArrayList);
         maxY = helperArrayList.getLast();
         helperArrayList.clear();
         //now for Z
@@ -103,7 +126,6 @@ public class RiftOriginBlock extends Block implements EntityBlock {
         helperArrayList.add(C1.getZ());
         helperArrayList.add(C2.getZ());
         helperArrayList.sort(null);
-        System.out.println(helperArrayList);
         maxZ = helperArrayList.getLast();
         helperArrayList.clear();
         //save relative vectors^^
@@ -113,7 +135,16 @@ public class RiftOriginBlock extends Block implements EntityBlock {
         entity.getLevel().setBlockAndUpdate(place,Blocks.END_STONE.defaultBlockState());
         BlockPos place1 = pointSymmetry(corePos,place);
         entity.getLevel().setBlockAndUpdate(place1,Blocks.END_STONE.defaultBlockState());
+        ArrayList<BlockPos> toReturn = new ArrayList<BlockPos>();
+        if(place.getY()>place1.getY()){
+            toReturn.add(place);
+            toReturn.add(place1);
+        }else{
+            toReturn.add(place1);
+            toReturn.add(place);
+        }
 
+        return toReturn;
     }
 
     private static double distancePlain(BlockEntity entity,BlockPos pos){
@@ -152,29 +183,30 @@ public class RiftOriginBlock extends Block implements EntityBlock {
     private static double distanceCore(BlockEntity entity,BlockPos pos){
         BlockPos entityPos = entity.getBlockPos();
         double toReturn = 0.0;
-        toReturn = Math.pow((Math.pow((entityPos.getX()-pos.getX()),2)+
-                Math.pow((entityPos.getY()-pos.getY()),2)+
-                Math.pow((entityPos.getZ()-pos.getZ()),2)),0.5);
+        int x=  pos.getX()-entityPos.getX();
+        int y=  pos.getY()-entityPos.getY();
+        int z=  pos.getZ()-entityPos.getZ();
+        toReturn = Math.sqrt((Math.pow(x,2)+
+                Math.pow(y,2)+
+                Math.pow(z,2)));
         return toReturn;
     }
 
     @Override
     protected void onPlace(BlockState state,  Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         BlockEntity entity = level.getBlockEntity(pos);
-        entity.setData(RIFT_SIZE,6);//this represents the max distance any rift object can have from the rift
+        entity.setData(RIFT_SIZE,30);//this represents the max distance any rift object can have from the rift
         ArrayList<Double> data = new ArrayList<Double>();
-        data.add(0.0);data.add(1.0);data.add(0.0);
+        data.add(1.0);data.add(0.0);data.add(0.0);
         entity.setData(RIFT_PLAIN_NORMAL,data);
         ArrayList<Double> data2 = new ArrayList<Double>();
-        data2.add(1.0);data2.add(0.0);data2.add(0.0);
+        data2.add(0.0);data2.add(1.0);data2.add(0.0);
         entity.setData(RIFT_LINE,data2);
         ArrayList<ArrayList<Integer>> empty = new ArrayList<ArrayList<Integer>>();
         entity.setData(RIFT_POSSIBLE_LOCATIONS,empty);
         calculateCorners(entity);
-        if (!level.isClientSide) {
-            // Schedule a tick for the block every second (20 ticks)
-            level.scheduleTick(pos, this, 2);
-        }
+        expandRift(entity,0);
+        level.scheduleTick(pos, this, 2);
         super.onPlace(state, level, pos, oldState, movedByPiston);
     }
 
@@ -183,7 +215,8 @@ public class RiftOriginBlock extends Block implements EntityBlock {
         BlockEntity entity = level.getBlockEntity(pos);
         if(!entity.getData(RIFT_EXPANSION_DONE)) {
             expandRift(entity,entity.getData(RIFT_EXPANSION_SUBLEVEL));
-            level.scheduleTick(pos, this, 2);
+            entity.setData(RIFT_EXPANSION_SUBLEVEL,entity.getData(RIFT_EXPANSION_SUBLEVEL)+1);
+            level.scheduleTick(pos, this, 20);
         }
         super.tick(state, level, pos, random);
     }

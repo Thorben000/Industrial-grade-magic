@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "industrialgrademagic:block/rift_beam_generator"
+    }
+  }
+}

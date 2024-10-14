@@ -3,6 +3,7 @@ package net.thesia.industrialgrademagic;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.neoforge.common.CreativeModeTabRegistry;
 import net.thesia.industrialgrademagic.blocks.RiftBlock;
+import net.thesia.industrialgrademagic.entity.RiftEmitterBlockEntity;
 import net.thesia.industrialgrademagic.entity.RiftOriginBlockEntity;
 import net.thesia.industrialgrademagic.item.ModItems;
 import net.thesia.industrialgrademagic.utility.RiftHandler;
@@ -47,6 +48,7 @@ public class IndustrialGradeMagic
         RiftBlock.register(modEventBus);
         RiftHandler.register(modEventBus);
         RiftOriginBlockEntity.register(modEventBus);
+        RiftEmitterBlockEntity.register(modEventBus);
 
 
 
@@ -66,9 +68,11 @@ public class IndustrialGradeMagic
     private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
     if (event.getTabKey() == CreativeModeTabs.INGREDIENTS){
-        event.accept(ModItems.RIFTBLOCKITEM);
         event.accept(RiftBlock.RIFT_BLOCK);
         event.accept(RiftBlock.RIFT_ORIGIN_BLOCK);
+        event.accept(RiftBlock.RIFT_EMITTER_BLOCK);
+        event.accept(RiftBlock.RIFT_BASIC_STABILIZER_BLOCK);
+        event.accept(RiftBlock.RIFT_BEAM_GENERATOR_BLOCK);
     }
     }
 
